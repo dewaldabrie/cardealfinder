@@ -20,18 +20,62 @@ class CarsalesSpider(scrapy.Spider):
     
         for listing in listings:
             item = DealFinderItem()
+            import pdb; pdb.set_trace()
+            item['listing'] = listing.extract()
             item['title'] = listing.xpath('//div[contains(@class,"title")]/a/h2/text()').extract()[0]
             item['url'] = listing.xpath('//div[contains(@class,"title")]/a/@href').extract()[0]
+            item['id'] = 
             item['year'] = self.get_year(item['title'])
             item['make'] = self.get_make(item['title'])
             item['model'] = self.get_model(item['title'])
             item['transmission'] = self.get_transmission(item['title'])
             item['manufacturer_marketing_year'] = self.get_manufacturer_marketing_year(item['title'])
-            item['price'] =  
-            item['odometer'] =  
-            item['engine_capacity'] =  
-            item['fuel_type'] =  
+            item['price'] = self.parse_price(listing.xpath('//div[@class="price"]/text()').extract()[0])
+            item['odometer'] = self.parse_odomter(self.extract_odometer(listing.xpath('//div[@class="feature-text"]/text()').extract()))
+            item['engine_capacity'] = self.get_engine_capacity(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
+            item['fuel_type'] = self.get_fuel_type(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
+            item['n_cylinders'] = self.get_n_cylinders(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
             yield item
+
+    @staticmethod
+    def get_n_cylinders(engine_details):
+        m = re.search(r'(\d)cyl', engine_details)
+        if m:
+            return m.groups()[0]
+
+    @staticmethod
+    def get_fuel_type(engine_details):
+        m = re.search(r'(Petrol|Diesel)', engine_details)
+        if m:
+            return m.groups()[0]
+
+    @staticmethod
+    def get_engine_capacity(engine_details):
+        m = re.search(r'(\d\.{0.1}\d{0,1})L', engine_details)
+        if m:
+            return m.groups()[0]
+
+    @staticmethod
+    def extract_engine_details(feature_texts):
+        for feature_text in feature_texts:
+            if ('cyl' in feature_text
+                and 'L' in feature_text
+                and ('Petrol' in feature_text or 'Diesel' in feature_text)):
+                return feature_text
+
+    @staticmethod
+    def extract_odometer(feature_texts):
+        for feature_text in feature_texts:
+            if 'km' in feature_text:
+                return feature_text
+    
+    @staticmethod
+    def parse_odomter(odometer_string):
+        return odometer_string.replace('km', '') 
+
+    @staticmethod
+    def parse_price(price_string):
+        return price_string.replace('$','').replace(',', '').replace('*', '')
 
     @staticmethod
     def get_year(title):
