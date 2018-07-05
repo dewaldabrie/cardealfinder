@@ -23,3 +23,4 @@ class DealFinderItem(scrapy.Item):
     fuel_type = scrapy.Field()
     n_cylinders = scrapy.Field()
     listing = scrapy.Field()
+    drive_type = scrapy.Field()

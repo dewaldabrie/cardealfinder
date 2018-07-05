@@ -1,2 +1,17 @@
 Link to tutorial that was used for this project:
 https://realpython.com/web-scraping-with-scrapy-and-mongodb/
+
+To Read:
+https://docs.scrapy.org/en/latest/topics/item-pipeline.html#write-items-to-mongodb
+https://towardsdatascience.com/how-to-build-recurring-web-spider-jobs-using-scrapy-scrapinghub-and-amazon-s3-43dbe3c73b69
+https://github.com/acordiner/scrapy-dynamodb
+http://neuralfoundry.com/scrapy-and-dynamodb-on-aws/
+
+serverles crawler
+https://github.com/orangain/serverless-crawler
+
+consider serverless crawler with sqlite db stored on S3
+https://github.com/RockyZ/Scrapy-sqlite-item-exporter
+
+or scrapinghub crawler with data in mongodb
+

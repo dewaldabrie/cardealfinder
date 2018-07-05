@@ -22,9 +22,8 @@ class CarsalesSpider(scrapy.Spider):
             item = DealFinderItem()
             import pdb; pdb.set_trace()
             item['listing'] = listing.extract()
-            item['title'] = listing.xpath('//div[contains(@class,"title")]/a/h2/text()').extract()[0]
+            item['title'] = listing.xpath('//div[contains(@class,"title")]/a/h2/text()').extract()[0].strip()
             item['url'] = listing.xpath('//div[contains(@class,"title")]/a/@href').extract()[0]
-            item['id'] = 
             item['year'] = self.get_year(item['title'])
             item['make'] = self.get_make(item['title'])
             item['model'] = self.get_model(item['title'])
@@ -35,7 +34,15 @@ class CarsalesSpider(scrapy.Spider):
             item['engine_capacity'] = self.get_engine_capacity(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
             item['fuel_type'] = self.get_fuel_type(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
             item['n_cylinders'] = self.get_n_cylinders(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
+            item['drive_type'] = self.get_drive_type(item['title'])
             yield item
+
+
+    @staticmethod
+    def get_drive_type(title):
+        m = re.search(r'(2WD|AWD|4WD)', title)
+        if m:
+            return m.groups()[0]
 
     @staticmethod
     def get_n_cylinders(engine_details):
@@ -67,7 +74,7 @@ class CarsalesSpider(scrapy.Spider):
     def extract_odometer(feature_texts):
         for feature_text in feature_texts:
             if 'km' in feature_text:
-                return feature_text
+                return feature_text.strip().replace(',', '')
     
     @staticmethod
     def parse_odomter(odometer_string):
@@ -79,19 +86,19 @@ class CarsalesSpider(scrapy.Spider):
 
     @staticmethod
     def get_year(title):
-        m = re.match(r'^(\d{4})\s', title)
+        m = re.match(r'^\w*(\d{4})\s', title)
         if m:
             return m.groups()[0]
 
     @staticmethod
     def get_make(title):
-        m = re.match(r'^\d{4}\s(\w*)\s', title)
+        m = re.match(r'^\w*\d{4}\s(\w*)\s', title)
         if m:
             return m.groups()[0]
 
     @staticmethod
     def get_model(title):
-        m = re.match(r'^\d{4}\s\w+\s(.+)(Manual|Auto)', title)
+        m = re.match(r'^\w*\d{4}\s\w+\s(.+)(Manual|Auto)', title)
         if m:
             return m.groups()[0].strip()
 
