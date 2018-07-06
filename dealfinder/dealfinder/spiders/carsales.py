@@ -39,7 +39,6 @@ class CarsalesSpider(scrapy.Spider):
             item['fuel_type'] = self.get_fuel_type(engine_details)
             item['n_cylinders'] = self.get_n_cylinders(engine_details)
             item['drive_type'] = self.get_drive_type(item['title'])
-            import pdb; pdb.set_trace()
             yield item
 
 
