@@ -20,21 +20,26 @@ class CarsalesSpider(scrapy.Spider):
     
         for listing in listings:
             item = DealFinderItem()
-            import pdb; pdb.set_trace()
-            item['listing'] = listing.extract()
-            item['title'] = listing.xpath('//div[contains(@class,"title")]/a/h2/text()').extract()[0].strip()
-            item['url'] = listing.xpath('//div[contains(@class,"title")]/a/@href').extract()[0]
+            #item['listing'] = listing.extract()
+            item['title'] = listing.css('div.title a h2 ::text').extract()[0].strip()
+            item['url'] = listing.css('div.title a').xpath('@href').extract()[0]
+            item['id'] = listing.css('div.title a').xpath('@href').re_first(r'/dealer/details/(.*)/\?')
             item['year'] = self.get_year(item['title'])
             item['make'] = self.get_make(item['title'])
             item['model'] = self.get_model(item['title'])
             item['transmission'] = self.get_transmission(item['title'])
             item['manufacturer_marketing_year'] = self.get_manufacturer_marketing_year(item['title'])
-            item['price'] = self.parse_price(listing.xpath('//div[@class="price"]/text()').extract()[0])
-            item['odometer'] = self.parse_odomter(self.extract_odometer(listing.xpath('//div[@class="feature-text"]/text()').extract()))
-            item['engine_capacity'] = self.get_engine_capacity(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
-            item['fuel_type'] = self.get_fuel_type(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
-            item['n_cylinders'] = self.get_n_cylinders(self.extract_engine_details(listing.xpath('//div[@class="feature-text"]/text()').extract()))
+            item['price'] = self.parse_price(listing.css('div.price ::text').extract()[0])
+            item['odometer'] = self.parse_odometer(
+                self.extract_odometer(listing.css('div.feature-text ::text').extract()))
+            engine_details = self.extract_engine_details(
+                listing.css('.feature-text ::text').extract()
+            )
+            item['engine_capacity'] = self.get_engine_capacity(engine_details)
+            item['fuel_type'] = self.get_fuel_type(engine_details)
+            item['n_cylinders'] = self.get_n_cylinders(engine_details)
             item['drive_type'] = self.get_drive_type(item['title'])
+            import pdb; pdb.set_trace()
             yield item
 
 
@@ -58,7 +63,7 @@ class CarsalesSpider(scrapy.Spider):
 
     @staticmethod
     def get_engine_capacity(engine_details):
-        m = re.search(r'(\d\.{0.1}\d{0,1})L', engine_details)
+        m = re.search(r'(\d\.{0,1}\d{0,1})L', engine_details)
         if m:
             return m.groups()[0]
 
@@ -77,8 +82,8 @@ class CarsalesSpider(scrapy.Spider):
                 return feature_text.strip().replace(',', '')
     
     @staticmethod
-    def parse_odomter(odometer_string):
-        return odometer_string.replace('km', '') 
+    def parse_odometer(odometer_string):
+        return odometer_string.replace('km', '').strip() 
 
     @staticmethod
     def parse_price(price_string):

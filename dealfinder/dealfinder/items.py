@@ -11,6 +11,7 @@ import scrapy
 class DealFinderItem(scrapy.Item):
     # define the fields for your item here like:
     title = scrapy.Field()
+    id = scrapy.Field()
     url = scrapy.Field()
     year = scrapy.Field()
     make = scrapy.Field()
@@ -22,5 +23,5 @@ class DealFinderItem(scrapy.Item):
     engine_capacity = scrapy.Field()
     fuel_type = scrapy.Field()
     n_cylinders = scrapy.Field()
-    listing = scrapy.Field()
+    #listing = scrapy.Field()
     drive_type = scrapy.Field()
