@@ -13,6 +13,7 @@ class CarsalesSpider(scrapy.Spider):
         'https://www.carsales.com.au/cars/results?limit=24&offset=24&setype=pagination&q=%28And.State.New%20South%20Wales._.BodyStyle.SUV._.Service.Carsales._.Price.range%280..20000%29._.Year.range%282013..%29._.Odometer.range%280..60000%29._.EngineSize.range%281500..2000%29.%29&sortby=~Price&offset=0&area=Stock&vertical=car&WT.z_srchsrcx=makemodel',
         'https://www.carsales.com.au/cars/results?limit=24&offset=48&setype=pagination&q=%28And.State.New%20South%20Wales._.BodyStyle.SUV._.Service.Carsales._.Price.range%280..20000%29._.Year.range%282013..%29._.Odometer.range%280..60000%29._.EngineSize.range%281500..2000%29.%29&sortby=~Price&offset=0&area=Stock&vertical=car&WT.z_srchsrcx=makemodel',
         'https://www.carsales.com.au/cars/results?limit=24&offset=72&setype=pagination&q=%28And.State.New%20South%20Wales._.BodyStyle.SUV._.Service.Carsales._.Price.range%280..20000%29._.Year.range%282013..%29._.Odometer.range%280..60000%29._.EngineSize.range%281500..2000%29.%29&sortby=~Price&offset=0&area=Stock&vertical=car&WT.z_srchsrcx=makemodel',
+        'https://www.carsales.com.au/cars/results?limit=24&offset=96&setype=pagination&q=%28And.State.New%20South%20Wales._.BodyStyle.SUV._.Service.Carsales._.Price.range%280..20000%29._.Year.range%282013..%29._.Odometer.range%280..60000%29._.EngineSize.range%281500..2000%29.%29&sortby=~Price&offset=0&area=Stock&vertical=car&WT.z_srchsrcx=makemodel',
     ]
 
     def parse(self, response):
