@@ -25,7 +25,7 @@ class CarsalesSpider(scrapy.Spider):
             if not title:
                 continue
             item['title'] = title[0].strip()
-            item['url'] = listing.css('div.title a').xpath('@href').extract()[0]
+            item['url'] = 'carsales.com.au' + listing.css('div.title a').xpath('@href').extract()[0]
             item['id'] = listing.css('div.title a').xpath('@href').re_first(r'/dealer/details/(.*)/\?')
             item['year'] = self.get_year(item['title'])
             item['make'] = self.get_make(item['title'])
