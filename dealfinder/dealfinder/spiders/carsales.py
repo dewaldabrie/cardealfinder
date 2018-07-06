@@ -21,7 +21,10 @@ class CarsalesSpider(scrapy.Spider):
         for listing in listings:
             item = DealFinderItem()
             #item['listing'] = listing.extract()
-            item['title'] = listing.css('div.title a h2 ::text').extract()[0].strip()
+            title = listing.css('div.title a h2 ::text').extract()
+            if not title:
+                continue
+            item['title'] = title[0].strip()
             item['url'] = listing.css('div.title a').xpath('@href').extract()[0]
             item['id'] = listing.css('div.title a').xpath('@href').re_first(r'/dealer/details/(.*)/\?')
             item['year'] = self.get_year(item['title'])
